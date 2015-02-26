@@ -1,4 +1,5 @@
 /*
+
 Truck bed sensor
 - Reads value of ultrasonic and looks for deviation
 - if deviation is greater than 60cm trigger output
