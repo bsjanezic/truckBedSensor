@@ -2,18 +2,19 @@
 
 Truck bed sensor
 - Reads value of ultrasonic and looks for deviation
-- if deviation is greater than 60cm trigger output
+- if deviation is greater than 29com trigger output
+- modified to use maxbotics sensor
 */
 //#include <SPI.h>
-#include <NewPing.h>
+//#include <NewPing.h>
 
-#define PING_ONE 3
+#define sensorPin 3
 #define ledPin 10
 
-int pingDistance =000;
-int newPingDistance =000;
+long pingDistance =000;
+long newPingDistance =000;
 int bedSensed = 0;
-NewPing pingOne(PING_ONE, PING_ONE, 300);
+
 
 void setup(){
   pinMode(ledPin, OUTPUT);
@@ -26,20 +27,29 @@ void loop()
   newPingDistance = pingUltrasonic();
   if(((newPingDistance - pingDistance) > 59) && bedSensed != 1)
   {
-    // recognized truck bed now turn off wax
+    // recognized truck bed or end of car
     bedSensed = 1;
     Serial.println("Truck bed");
     
     digitalWrite(ledPin, HIGH);
   }
   pingDistance = newPingDistance;
-  delay(1000);
+  delay(100);
 }
-int pingUltrasonic(){
-  unsigned int uS = pingOne.ping_median(15);
-  int sensorDistance = (uS/US_ROUNDTRIP_CM);
-  Serial.println(sensorDistance);
-  return sensorDistance;
+long pingUltrasonic(){
+  int readingCount = 15;
+  long averageDistance =0;
+  for (int i=0; i< readingCount; i++)
+  {
+    long uS = pulseIn(sensorPin, HIGH);
+    long sensorDistance = uS/59; // round trip
+   // valueArray[i] = sensorDistance;
+    averageDistance = averageDistance+sensorDistance;  
+}
+  averageDistance = averageDistance/readingCount;
+  Serial.println(averageDistance);
+  return averageDistance;
   
 }
+
 
